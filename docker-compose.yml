@@ -36,6 +36,14 @@ services:
       - db
     links:
       - "db:database"
+  wso2:
+    image: wso2/wso2am
+    restart: always
+    container_name: keycloak-wso2
+    ports:
+      - "8280:8280"
+      - "8243:8243"
+      - "9443:9443"
   
 volumes:
   my-db:
