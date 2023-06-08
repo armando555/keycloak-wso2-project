@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    container_name: keycloak-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - '5432:5432'
+    volumes: 
+      - my-db:/var/lib/postgresql/data
+
+  sso:
+    image: bitnami/keycloak
+    restart: always
+    container_name: keycloak-sso
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin 
+      KEYCLOAK_ADMIN_PASSWORD: admin1
+      KEYCLOAK_MANAGEMENT_USER: manager
+      KEYCLOAK_MANAGEMENT_PASSWORD: manager1
+      KEYCLOAK_DATABASE_HOST: database
+      KEYCLOAK_DATABASE_PORT: 5432
+      KEYCLOAK_DATABASE_NAME: postgres
+      KEYCLOAK_DATABASE_SCHEMA: public
+      KEYCLOAK_DATABASE_USER: postgres
+      KEYCLOAK_DATABASE_PASSWORD: postgres
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+
+    depends_on:
+      - db
+    links:
+      - "db:database"
+  
+volumes:
+  my-db:
